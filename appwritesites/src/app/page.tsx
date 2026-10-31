@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
-import { account } from "@/lib/appwrite";
 import { Copy, Check, Loader2, Link as LinkIcon, AlertCircle, Moon, Sun, ArrowLeft } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -65,32 +64,11 @@ export default function Home() {
 
     try {
       setLoading(true);
-      
-      let jwt = "";
-      try {
-        // Try to get JWT first
-        const jwtData = await account.createJWT();
-        jwt = jwtData.jwt;
-      } catch (err: any) {
-        // If it fails, try to create an anonymous session
-        try {
-          await account.createAnonymousSession();
-          const jwtData = await account.createJWT();
-          jwt = jwtData.jwt;
-        } catch (sessionErr: any) {
-          // If session already exists or other error, try JWT one last time
-          const jwtData = await account.createJWT();
-          jwt = jwtData.jwt;
-        }
-      }
-
-      if (!jwt) throw new Error("Could not generate secure token.");
 
       const response = await fetch("https://l.mshr.dev/api/shorten", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-appwrite-jwt": jwt,
         },
         body: JSON.stringify({ url: processedUrl, expiry, honeypot }),
       });
